@@ -31,7 +31,8 @@ int main()
     usuario.ComenzarDraft(draft_usado);
     bool ciclo = true;
     while (ciclo == true){
-        cout << "Quieres (0) agregar una carta, (1) ver tus cartas?, o (2) Salir? " << endl;
+        //Para ver 
+        cout << "Quieres (0) agregar una carta, (1) ver tus cartas?, (2) Salir, o (3) Crear Caso Prueba (es una deck ya hecha)? " << endl;
         int des;
         cin >> des;
         /*En esta primera opcion, se van a agregar cartas hasta abajo, esto
@@ -58,6 +59,11 @@ int main()
         else if (des==2)
         {
             break;
+        }
+        else if (des==3)
+        {
+            draft_usado+=1;
+            usuario.casoPrueba(draft_usado);
         }
     }
     
