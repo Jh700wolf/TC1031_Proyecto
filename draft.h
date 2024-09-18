@@ -14,9 +14,9 @@ class Draft
 {
 private:
     string nombre;
-    string nombres_cartas[60];
-    int costes_mana[60];
-    int lugarInsert = 59;
+    string nombres_cartas[40];
+    int costes_mana[40];
+    int lugarInsert = 39;
 public:
     Draft();
     Draft(string);
@@ -26,6 +26,7 @@ public:
     void agregar_carta(string,int);
     void sort_cartas();
     void swap_carta(int,int);
+    void casoPrueba();
 
 };
 
@@ -44,7 +45,7 @@ Draft::Draft(string nombre_){
 
 //LLena el arreglo de tierras
 void Draft::llenar_lands(int limite){
-    for (int i=0;i<=59;i++){
+    for (int i=0;i<=39;i++){
         nombres_cartas[i]="Plains";
         costes_mana[i]=0;
     }
@@ -52,7 +53,7 @@ void Draft::llenar_lands(int limite){
 
 //Muestra todo el arreglo
 void Draft::mostrar_deck(){
-    for (int i=0;i<=59;i++){
+    for (int i=0;i<=39;i++){
         cout << "Coste: " << costes_mana[i];
         cout << " Nombre: " << nombres_cartas[i] << endl;
     }
@@ -74,8 +75,8 @@ void Draft::swap_carta(int a, int b){
 por el hecho de que el cambio de un arreglo debe de actuar en el otro.
 Se ordena de mayor a menor, y asi las cartas nuevas se agregan hasta abajo.-*/
 void Draft::sort_cartas(){
-    for (int i=0;i<=59;i++){
-        for(int j=59; j>i;j--){
+    for (int i=0;i<=39;i++){
+        for(int j=39; j>i;j--){
             if (costes_mana[j]>costes_mana[j-1]){
                 swap_carta(j,j-1);
             }
@@ -86,5 +87,27 @@ void Draft::sort_cartas(){
 void Draft::agregar_carta(string nombre, int coste){
     nombres_cartas[lugarInsert] = nombre;
     costes_mana[lugarInsert] = coste;
+}
+
+void Draft::casoPrueba()
+{
+    costes_mana[0]=3;
+    nombres_cartas[0]="Rocco_Street_Chef";
+    costes_mana[1]=1;
+    nombres_cartas[1]="Shock";
+    costes_mana[2]=4;
+    nombres_cartas[2]="Krenko_Mob_Boss";
+    costes_mana[3]=2;
+    nombres_cartas[3]="Rampant_Growth";
+    costes_mana[4]=2;
+    nombres_cartas[4]="Fblthp_The_Lost";
+    costes_mana[5]=3;
+    nombres_cartas[5]="Cancel";
+    costes_mana[6]=9;
+    nombres_cartas[6]="Omnicience";
+    costes_mana[7]=4;
+    nombres_cartas[7]="Smothering_Tithe";
+    costes_mana[8]=3;
+    nombres_cartas[8]="Murder";
 }
 #endif 
