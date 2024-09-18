@@ -23,6 +23,7 @@ class User
         void ComenzarDraft(int);
         void mostrarDraft(int);
         void agregarCarta(int,string,int);
+        void casoPrueba(int);
 
 };
 // Constructor
@@ -71,5 +72,12 @@ por la nueva carta */
 void User::agregarCarta(int n,string nombre_carta, int coste){
     drafts[n] -> sort_cartas();
     drafts[n] -> agregar_carta(nombre_carta,coste);
+}
+
+void User::casoPrueba(int n){
+    drafts[n] = new Draft;
+    drafts[n] ->casoPrueba();
+    cout << "Asi se ve el ejemplo antes del Sort:" << endl;
+    drafts[n] ->mostrar_deck();
 }
 #endif
