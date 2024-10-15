@@ -32,21 +32,31 @@ int main()
     bool ciclo = true;
     while (ciclo == true){
         //Para ver 
-        cout << "Quieres (0) agregar una carta, (1) ver tus cartas?, (2) Salir, o (3) Crear Caso Prueba (es una deck ya hecha)? " << endl;
+        cout << "Quieres (0) agregar una carta, (1) ver tus cartas, (2) Salir, (3) Crear Caso Prueba (es una deck ya hecha), (4) Terminar deck" << endl;
         int des;
         cin >> des;
-        /*En esta primera opcion, se van a agregar cartas hasta abajo, esto
-        para que puedas agregar las cartas sin cambiar otras cartas.
+        /*En esta primera opcion, se van a agregar cartas hasta el final. Complejidad en draft.h
+        NO USAR ESPACIOS POR PRECAUCION!!!!
         */
         if (des == 0)
         {
             string nombre;
+            string tipo;
+            string color;
             int coste;
+            int manapips;
+            cout << "Vas a agregar una carta, no uses espacios."<<endl;
             cout << "Dame el nombre de la carta a agregar:" << endl;
             cin >> nombre;
+            cout << "Dame el tipo de carta a agregar:" <<endl;
+            cin >> tipo;
+            cout << "Dame el color de la carta" <<endl;
+            cin >> color;
             cout << "Dame el costo de la carta a agregar:" << endl;
             cin >> coste;
-            usuario.agregarCarta(draft_usado,nombre, coste);
+            cout << "Dame el número de mana pips de la carta a agregar:" <<endl;
+            cin >> manapips;
+            usuario.agregarCarta(draft_usado, nombre, tipo, color, coste, manapips);
 
         }
         /*Aqui te muestra la deck ya organizada, usando el sort explicado
@@ -55,15 +65,20 @@ int main()
         {
             usuario.mostrarDraft(draft_usado);
         }
-        /*La ultima es para salir de la aplicacion*/
+        /*Es para salir de la aplicacion*/
         else if (des==2)
         {
             break;
         }
+        /*Genera los casos de prueba*/
         else if (des==3)
         {
             draft_usado+=1;
             usuario.casoPrueba(draft_usado);
+        }
+        /*Completa una deck con tierras.*/
+        else if (des==4){
+            usuario.terminarDeck(draft_usado);
         }
     }
     
