@@ -7,107 +7,245 @@
 #include <sstream> //Para el uso de Strings
 
 using namespace std;
+/*Aqui se define la clase de Carta, la cual almacena todos los valores
+importantes de una carta. Ademas, trae sus uniones de prev y next para la lista
+doblemente ligada. Se selecciono este metodo, ya que en este proyecto se debe de 
+acomodar las cartas de distintas formas de acuerdo a coste
+o a mana pips, y los arboles se desharian muy facilmente.*/
+class Carta{
+    private:
+    //Valores para el usuario
+        string nombre;
+        string tipo;
+        string color;
+        int coste;
+        int manaPips;
+    //Valores para el sistema
+        Carta *prev;
+        Carta *next;
+    public:
+        Carta();
+        Carta(string, string, string, int, int);
+        Carta(string, string, string, int, int, Carta*, Carta*); 
+        friend class Draft;   
+};
+
+//Constructor vacio de Carta
+Carta::Carta(){
+    nombre="";
+    tipo="";
+    color="";
+    coste=0;
+    manaPips=0;
+    prev=0;
+    next=0;
+}
+//Constructor de carta, con apuntadores vacios.
+Carta::Carta(string nom_, string tipo_, string color_,int cost, int manap){
+    nombre=nom_;
+    tipo=tipo_;
+    color=color_;
+    coste=cost;
+    manaPips=manap;
+    prev=0;
+    next=0;
+}
+//Copiador de carta, aqui en caso de ser necesario mas adelante.
+Carta::Carta(string nom_, string tipo_, string color_,int cost, int manap, Carta *p, Carta *n){
+    nombre=nom_;
+    tipo=tipo_;
+    color=color_;
+    coste=cost;
+    manaPips=manap;
+    prev=p;
+    next=n;
+}
 
 /*Es la definicion de una clase de un draft, donde se van a guardar sus cartas
-aqui se guardan en dos arreglos, uno con el coste y el otro con el nombre.*/
+en una lista doblemente ligada. Tiene un head y un tail.*/
 class Draft
 {
 private:
     string nombre;
-    string nombres_cartas[40];
-    int costes_mana[40];
-    int lugarInsert = 39;
+    Carta *head;
+    Carta *tail;
+    int size;
+
 public:
     Draft();
-    Draft(string);
-    ~Draft();
-    void llenar_lands(int);
-    void mostrar_deck();
-    void agregar_carta(string,int);
-    void sort_cartas();
-    void swap_carta(int,int);
+    bool vacia();
+    void insertCard(string, string, string, int, int);
+    void llenarLands();
+    void mostrarDeckadelante();
+    void mostrarDeckatras();
+    void mostrarDeckPips();
+    void sortDeckCost();
+    void sortDeckManaP();
+    void swapCarta(Carta*, Carta*);
     void casoPrueba();
-
 };
 
-Draft::Draft()
-{
-    nombre="";
+//Constructor vacio
+Draft::Draft(){
+    nombre = "";
+    head=0;
+    tail=0;
+    size=0;
+}
+//Checa si la lista esta vacia, usando el apuntador head como señal.
+bool Draft::vacia(){
+    return (head==0);
 }
 
-Draft::~Draft()
-{
-}
-
-Draft::Draft(string nombre_){
-    nombre=nombre_;
-}
-
-//LLena el arreglo de tierras
-void Draft::llenar_lands(int limite){
-    for (int i=0;i<=39;i++){
-        nombres_cartas[i]="Plains";
-        costes_mana[i]=0;
+//Inserta una carta hasta el final. Aqui no se acomodan las cartas. La complejidad de esta 
+//funcion es de o(1), ya que o lo pone como primera carta o usa tail para ponerla al final. 
+void Draft::insertCard(string nombre_, string tipo_, string color_, int coste_, int manapips_){
+    Carta *nuevaCarta, *p;
+    nuevaCarta = new Carta(nombre_,tipo_, color_,coste_,manapips_);
+    if (vacia()){
+        nuevaCarta->next=0;
+        nuevaCarta->prev=0;
+        tail=nuevaCarta;
+        head=nuevaCarta;
+        size++;
+        return;
     }
+    p=tail;
+    p->next=nuevaCarta;
+    nuevaCarta->prev=p;
+    nuevaCarta->next=0;
+    tail=nuevaCarta;
+    size++;
 }
-
-//Muestra todo el arreglo
-void Draft::mostrar_deck(){
-    for (int i=0;i<=39;i++){
-        cout << "Coste: " << costes_mana[i];
-        cout << " Nombre: " << nombres_cartas[i] << endl;
-    }
-}
-
-//Funcion auxiliar del sort_cartas, para hacer el swap en ambos
-//arreglos.
-void Draft::swap_carta(int a, int b){
-    int aux_coste = costes_mana[a];
-    string aux_nombre = nombres_cartas[a];
-    costes_mana[a] = costes_mana[b];
-    nombres_cartas[a] = nombres_cartas[b];
-    costes_mana[b]=aux_coste;
-    nombres_cartas[b]=aux_nombre;
-
-}
-
-/*Se uso e  esta actividad un bubble sort, expecificamente
-por el hecho de que el cambio de un arreglo debe de actuar en el otro.
-Se ordena de mayor a menor, y asi las cartas nuevas se agregan hasta abajo.-*/
-void Draft::sort_cartas(){
-    for (int i=0;i<=39;i++){
-        for(int j=39; j>i;j--){
-            if (costes_mana[j]>costes_mana[j-1]){
-                swap_carta(j,j-1);
-            }
+//Se usa para llenar la deck de lands. Es una funcion o(n), ya que usa un
+//while para ir agregando tierra por tierra hasta llegar al final de una deck normal.
+void Draft::llenarLands(){
+    if (size < 40){
+        while (size<40){
+            insertCard("Basic_Land","Basic_Land","Incoloro",0,0);
         }
     }
 }
 
-void Draft::agregar_carta(string nombre, int coste){
-    nombres_cartas[lugarInsert] = nombre;
-    costes_mana[lugarInsert] = coste;
+//Se muestra toda la lista de acuerdo al coste. Es una funcion o(n), ya que se recorren todos los elementos
+//de esta lista desde el head al tail. 
+void Draft::mostrarDeckadelante(){
+    Carta *p;
+    cout << "Asi se ve tu deck de la carta mas cara a la mas barata:"<<endl;
+    p=head;
+    while (p!=0){
+        cout << "Carta: "<< p->nombre <<" Tipo: "<<p->tipo<< "Color"<< p->color<<" Coste: "<<p->coste<<endl;
+        p=p->next;
+    }
 }
 
-void Draft::casoPrueba()
-{
-    costes_mana[0]=3;
-    nombres_cartas[0]="Rocco_Street_Chef";
-    costes_mana[1]=1;
-    nombres_cartas[1]="Shock";
-    costes_mana[2]=4;
-    nombres_cartas[2]="Krenko_Mob_Boss";
-    costes_mana[3]=2;
-    nombres_cartas[3]="Rampant_Growth";
-    costes_mana[4]=2;
-    nombres_cartas[4]="Fblthp_The_Lost";
-    costes_mana[5]=3;
-    nombres_cartas[5]="Cancel";
-    costes_mana[6]=9;
-    nombres_cartas[6]="Omnicience";
-    costes_mana[7]=4;
-    nombres_cartas[7]="Smothering_Tithe";
-    costes_mana[8]=3;
-    nombres_cartas[8]="Murder";
+//Se muestra toda la lista de acuerdo al coste. Es una funcion o(n), ya que se recorren todos los elementos
+//de esta lista desde el tail al head.
+void Draft::mostrarDeckatras(){
+    Carta *p;
+    cout << "Asi se ve tu deck de lo mas barato a lo mas caro:"<<endl;
+    p=tail;
+    while (p!=0){
+        cout << "Carta: "<< p->nombre <<" Tipo: "<<p->tipo<< " Coste: "<<p->coste<<endl;
+        p=p->prev;
+    }
 }
-#endif 
+
+//Esta función utiliza bubble sort para acomodar las cartas de acuerdo al coste. Tiene una complejidad
+// de o(n**2) conforme al tiempo, pero una espacial de o(1). El peor de los casos es si las cartas
+// estan acomodadas de forma opuesta, lo que te lleva a recorrerla varias veces y cambiar de uno en uno
+//todos los valores.
+void Draft::sortDeckCost(){
+    if (vacia()){
+        return;
+    }
+    Carta *p, *q;
+    for(int i = 0;i<size-1;i++){
+        p=tail;
+        q=tail->prev;
+        for(int j=size-1;j>i;j--){
+            if (q != 0 && p != 0) {
+                if (p->coste>q->coste){
+                    swapCarta(q,p);
+                    j++;
+                }
+            }
+            p=q;
+            q=q->prev;    
+            }
+        }
+    }
+
+//Funcion de apoyo para el sort.
+void Draft::swapCarta(Carta *x, Carta *y){
+    if (x == nullptr || y == nullptr){
+        return;
+    }
+
+    x->next=y->next;
+    if (x->next!=0){
+        x->next->prev=x;
+    }
+    y->prev=x->prev;
+    if (y->prev != 0){
+        y->prev->next=y;
+    }
+    x->prev=y;
+    y->next=x;
+    if (head==x){
+        head=y;
+    }
+    if (tail==y){
+        tail=x;
+    }
+}
+
+//Funcion para probar el sistema rapidamente.
+void Draft::casoPrueba(){
+    insertCard("Krenko_Mob_Boss","Creature","Red",4,2);
+    insertCard("Even_the_Score", "Instant", "Blue",3,3);
+    insertCard("Utvara_Hellkite","Creature","Red",8,2);
+    insertCard("Necromantic_Selection","Sorcery","Black",7,3);
+    insertCard("Grow_from_the_Ashes","Sorcery","Green",3,1);
+    insertCard("Stitch_Together","Sorcery","Black",2,2);
+    insertCard("Flameblast_Dragon","Creature","Red",6,2);
+    llenarLands();
+}
+
+/*Esta función utiliza bubble sort para acomodar las cartas de acuerdo al numero de pips de un color. 
+Tiene una complejidad de o(n**2) conforme al tiempo, pero una espacial de o(1). El peor de los casos es si las cartas
+estan acomodadas de forma opuesta, lo que te lleva a recorrerla varias veces y cambiar de uno en uno
+todos los valores.
+*/
+void Draft::sortDeckManaP(){
+    if (vacia()){
+        return;
+    }
+    Carta *p, *q;
+    for(int i = 0;i<size-1;i++){
+        p=tail;
+        q=tail->prev;
+        for(int j=size-1;j>i;j--){
+            if (q != 0 && p != 0) {
+                if (p->manaPips>q->manaPips){
+                    swapCarta(q,p);
+                    j++;
+                }
+            }
+            p=q;
+            q=q->prev;    
+            }
+        }
+}
+void Draft::mostrarDeckPips(){
+    sortDeckManaP();
+    Carta *p;
+    cout << "Asi se ve tu deck de la carta con mas mana pips a las que casi no tienen:"<<endl;
+    cout << "Toma en consideracion esto para ver si la carta es Splasheable o no." <<endl;
+    p=head;
+    while (p!=0){
+        cout << "Carta: "<< p->nombre <<" Tipo: "<<p->tipo<< "Color"<< p->color<<" Coste: "<<p->coste<<endl;
+        p=p->next;
+    }
+}
+#endif
