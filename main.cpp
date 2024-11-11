@@ -12,6 +12,7 @@ otro arreglo de cartas.
 #include <string>
 #include <iostream>
 #include <sstream> //Para el uso de Strings
+#include <fstream> //Para guardar o crear drafts en un archivo
 #include "user.h" //Biblioteca de usuarios de mi proyecto
 
 using namespace std;
@@ -19,20 +20,42 @@ using namespace std;
 int main()
 {
     cout << "Bienvenido a el organizador de Drafts de MTG" << endl;
-    cout << "En este programa se va a guardar toda la infro de las cartas elegidas" << endl;
+    cout << "En este programa se va a guardar toda la info de las cartas elegidas" << endl;
     cout << "Dame un nombre del jugador: " << endl;
     string jugador;
     cin >> jugador;
     User usuario;
     usuario.setNombre(jugador);
-    cout << "Perfecto, ahora vamos a comenzar el primer draft:" << endl;
-    
     int draft_usado=0;
+    fstream archDraft("DraftsGuardados.txt"); //Investigacion externa para el append de datos.
+    if (archDraft.is_open()){
+        string nom, tipo, color;
+        int draft, coste, mana;
+        while(archDraft >> draft){
+            usuario.ComenzarDraft(draft);
+            for(int i=0;i<40;i++){
+                archDraft >> nom;
+                archDraft >> tipo;
+                archDraft >> color;
+                archDraft >> coste;
+                archDraft >> mana;
+                usuario.agregarCarta(draft, nom, tipo, color, coste, mana);
+            }
+            usuario.deckinicio(draft);
+            draft_usado++;
+
+        }
+
+    }
+
     usuario.ComenzarDraft(draft_usado);
+    cout << "Perfecto, ahora vamos a comenzar el primer draft:" << endl;
     bool ciclo = true;
     while (ciclo == true){
         //Para ver 
-        cout << "Quieres (0) agregar una carta, (1) ver tus cartas, (2) Salir, (3) Crear Caso Prueba (es una deck ya hecha), (4) Terminar deck" << endl;
+        cout << "Quieres (0) agregar una carta, (1) ver tus cartas, (2) Salir, (3) Crear Caso Prueba (es una deck ya hecha)";
+        cout <<", (4) Terminar deck, (5) Mostrar deck anterior" << endl;
+        cout << "No uses espacios, usa _ si lo necesitas."<<endl;
         int des;
         cin >> des;
         /*En esta primera opcion, se van a agregar cartas hasta el final. Complejidad en draft.h
@@ -79,6 +102,18 @@ int main()
         /*Completa una deck con tierras.*/
         else if (des==4){
             usuario.terminarDeck(draft_usado);
+            usuario.guardarDeck(draft_usado);
+            cout << "Voy a crear un deck nuevo: "<<endl;
+            draft_usado+=1;
+            usuario.ComenzarDraft(draft_usado);
+        }
+
+        else if (des==5){
+            int deckElegida;
+            cout << "Elige la deck que quieres volver a visitar, no podras cambiarla pero si verla."<<endl;
+            cout << "En nuevas entregas podras ver los resultados de victorias y perdidas"<<endl;
+            cin >> deckElegida;
+            usuario.deckinicio(deckElegida);
         }
     }
     
