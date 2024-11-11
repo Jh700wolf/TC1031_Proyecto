@@ -83,6 +83,7 @@ public:
     void sortDeckManaP();
     void swapCarta(Carta*, Carta*);
     void casoPrueba();
+    void guardarCartas();
 };
 
 //Constructor vacio
@@ -244,8 +245,23 @@ void Draft::mostrarDeckPips(){
     cout << "Toma en consideracion esto para ver si la carta es Splasheable o no." <<endl;
     p=head;
     while (p!=0){
-        cout << "Carta: "<< p->nombre <<" Tipo: "<<p->tipo<< "Color"<< p->color<<" Coste: "<<p->coste<<endl;
+        cout << "Carta: "<< p->nombre <<" Tipo: "<<p->tipo<< " Color"<< p->color<<" Coste: "<<p->coste<<endl;
         p=p->next;
     }
+}
+
+void Draft::guardarCartas(){
+    Carta *p;
+    fstream archDraft("DraftsGuardados.txt",ios::app); //Investigacion externa para el append de datos.
+    if (archDraft.is_open()){
+        p=head;
+        while (p!=0){
+            archDraft << p->nombre <<" "<<p->tipo<< " "<< p->color<<" "<<p->coste<< 
+            " " << p->manaPips<<endl;
+            p=p->next;
+        }
+        archDraft.close();
+    }
+
 }
 #endif
