@@ -5,6 +5,7 @@
 #include <string>
 #include <iostream>
 #include <sstream>
+#include <fstream>
 #include "draft.h"
 
 using namespace std;
@@ -15,7 +16,7 @@ class User
 {
     private:
         string nombre;
-        Draft *drafts[10];
+        Draft *drafts[100];
         int numero_drafts=0;
 
     public:
@@ -26,7 +27,8 @@ class User
         void agregarCarta(int,string,string,string,int,int);
         void casoPrueba(int);
         void terminarDeck(int);
-
+        void guardarDeck(int);
+        void deckinicio(int);
 };
 // Constructor
 User::User()
@@ -43,7 +45,7 @@ void User::setNombre(string nombre_usuario){
 ENTRADA: numero de draft donde se esta trabajando
 SALIDA: no tiene
 
-Inicializa un draft en la posicion n.*/
+Inicializa un draft en la posicion n. Empieza a escribirlo en el archivo.txt*/
 void User::ComenzarDraft(int n)
 {
     drafts[n] = new Draft();
@@ -64,6 +66,12 @@ void User::mostrarDraft(int n){
     drafts[n]->mostrarDeckPips();
 }
 
+
+void User::deckinicio(int n){
+    cout << "Deck cargada:" << n << endl;
+    drafts[n]->sortDeckCost();
+    drafts[n]->mostrarDeckadelante();
+}
 /*
 ENTRADA: numero de draft donde se esta trabajando,
 nombre de la carta a agregar, tipo de carta, color,coste de la carta
@@ -90,6 +98,19 @@ void User::terminarDeck(int n){
     cout << "Tu deck ya esta completa, asi se ve:"<<endl;
     drafts[n]->mostrarDeckadelante();
 
+}
+
+void User::guardarDeck(int n){
+    fstream archDraft("DraftsGuardados.txt",ios::app);
+        if (archDraft.is_open()){
+            archDraft << n <<endl;
+            archDraft.close();
+            drafts[n]->guardarCartas();
+            
+        }
+        else{
+            cout<<"Problema al abrir el archivo"<< endl;
+        }
 }
 
 #endif
