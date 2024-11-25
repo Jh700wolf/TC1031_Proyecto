@@ -81,7 +81,11 @@ public:
     void mostrarDeckPips();
     void sortDeckCost();
     void sortDeckManaP();
-    void swapCarta(Carta*, Carta*);
+    Carta* SortMerge(Carta*);
+    Carta* Cortar(Carta*);
+    Carta* JuntarDeck(Carta*,Carta*);
+    Carta* SortMergeManaP(Carta*);
+    Carta* JuntarDeckManaP(Carta*,Carta*);
     void casoPrueba();
     void guardarCartas();
 };
@@ -135,7 +139,7 @@ void Draft::mostrarDeckadelante(){
     cout << "Asi se ve tu deck de la carta mas cara a la mas barata:"<<endl;
     p=head;
     while (p!=0){
-        cout << "Carta: "<< p->nombre <<" Tipo: "<<p->tipo<< "Color"<< p->color<<" Coste: "<<p->coste<<endl;
+        cout << "Carta: "<< p->nombre <<" Tipo: "<<p->tipo<< " Color: "<< p->color<<" Coste: "<<p->coste<<endl;
         p=p->next;
     }
 }
@@ -144,7 +148,7 @@ void Draft::mostrarDeckadelante(){
 //de esta lista desde el tail al head.
 void Draft::mostrarDeckatras(){
     Carta *p;
-    cout << "Asi se ve tu deck de lo mas barato a lo mas caro:"<<endl;
+    cout << "Barato a caro: "<<endl;
     p=tail;
     while (p!=0){
         cout << "Carta: "<< p->nombre <<" Tipo: "<<p->tipo<< " Coste: "<<p->coste<<endl;
@@ -160,46 +164,112 @@ void Draft::sortDeckCost(){
     if (vacia()){
         return;
     }
-    Carta *p, *q;
-    for(int i = 0;i<size-1;i++){
-        p=tail;
-        q=tail->prev;
-        for(int j=size-1;j>i;j--){
-            if (q != 0 && p != 0) {
-                if (p->coste>q->coste){
-                    swapCarta(q,p);
-                    j++;
-                }
-            }
-            p=q;
-            q=q->prev;    
-            }
+    head=SortMerge(head);
+    Carta *p=head;
+
+    while (p->next&&p)
+    {
+        p=p->next;
+    }
+
+    tail=p;
+    }
+
+Carta* Draft::SortMerge(Carta *a){
+    if (!a || !a->next){
+        return a;
+    }
+    Carta *mitad, *Head_;
+    mitad = Cortar(a);
+    Head_=SortMerge(a);
+    mitad=SortMerge(mitad);
+    return JuntarDeck(Head_, mitad);
+
+}
+
+Carta* Draft::SortMergeManaP(Carta *a){
+    if (!a || !a->next){
+        return a;
+    }
+    Carta *mitad, *Head_;
+    mitad = Cortar(a);
+    Head_=SortMerge(a);
+    mitad=SortMerge(mitad);
+    return JuntarDeckManaP(Head_, mitad);
+
+}
+
+Carta* Draft::Cortar(Carta *a){
+    Carta *p,*q, *aux;
+    p=q=a;
+    while (q->next && q->next->next){
+        q=q->next->next;
+        p=p->next;
+    }
+    aux = p->next;
+    p->next=nullptr;
+    return aux;
+
+}
+Carta* Draft::JuntarDeck(Carta *a, Carta *b){
+    if (!a){
+        return b;
+    }
+    else if (!b){
+        return a;
+    }
+    if (a->coste<b->coste){
+
+        a->next=JuntarDeck(a->next, b);
+        if(a->next){
+            a->next->prev=a;
         }
-    }
+        a->prev=nullptr;
 
-//Funcion de apoyo para el sort.
-void Draft::swapCarta(Carta *x, Carta *y){
-    if (x == nullptr || y == nullptr){
-        return;
+        return a;
     }
+    else{
+        b->next=JuntarDeck(a, b->next);
+        if (b->next){
+            b->next->prev=b;
+        }
+        
+        b->prev=nullptr;
 
-    x->next=y->next;
-    if (x->next!=0){
-        x->next->prev=x;
-    }
-    y->prev=x->prev;
-    if (y->prev != 0){
-        y->prev->next=y;
-    }
-    x->prev=y;
-    y->next=x;
-    if (head==x){
-        head=y;
-    }
-    if (tail==y){
-        tail=x;
+        return b; 
     }
 }
+
+Carta* Draft::JuntarDeckManaP(Carta *a, Carta *b){
+    if (!a){
+        return b;
+    }
+    else if (!b){
+        return a;
+    }
+    if (a->manaPips<b->manaPips){
+
+        a->next=JuntarDeck(a->next, b);
+        if(a->next){
+            a->next->prev=a;
+        }
+        a->prev=nullptr;
+
+        return a;
+    }
+    else{
+        b->next=JuntarDeck(a, b->next);
+        if (b->next){
+            b->next->prev=b;
+        }
+        
+        b->prev=nullptr;
+
+        return b; 
+    }
+}
+
+
 
 //Funcion para probar el sistema rapidamente.
 void Draft::casoPrueba(){
@@ -222,21 +292,14 @@ void Draft::sortDeckManaP(){
     if (vacia()){
         return;
     }
-    Carta *p, *q;
-    for(int i = 0;i<size-1;i++){
-        p=tail;
-        q=tail->prev;
-        for(int j=size-1;j>i;j--){
-            if (q != 0 && p != 0) {
-                if (p->manaPips>q->manaPips){
-                    swapCarta(q,p);
-                    j++;
-                }
-            }
-            p=q;
-            q=q->prev;    
-            }
-        }
+    head=SortMergeManaP(head);
+    Carta *p=head;
+
+    while (p->next&&p)
+    {
+        p=p->next;
+    }
+
 }
 void Draft::mostrarDeckPips(){
     sortDeckManaP();
@@ -245,7 +308,7 @@ void Draft::mostrarDeckPips(){
     cout << "Toma en consideracion esto para ver si la carta es Splasheable o no." <<endl;
     p=head;
     while (p!=0){
-        cout << "Carta: "<< p->nombre <<" Tipo: "<<p->tipo<< " Color"<< p->color<<" Coste: "<<p->coste<<endl;
+        cout << "Carta: "<< p->nombre <<" Tipo: "<<p->tipo<< " Color: "<< p->color<<" Coste: "<<p->coste<<endl;
         p=p->next;
     }
 }
