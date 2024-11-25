@@ -20,12 +20,14 @@ using namespace std;
 int main()
 {
     cout << "Bienvenido a el organizador de Drafts de MTG" << endl;
-    cout << "En este programa se va a guardar toda la info de las cartas elegidas" << endl;
+    cout << "En este programa se usa para poder guardar la info de tus drafts." << endl;
     cout << "Dame un nombre del jugador: " << endl;
     string jugador;
     cin >> jugador;
     User usuario;
     usuario.setNombre(jugador);
+    cout << "Ahora voy a cargar todas las decks que estaban"<<endl;
+    cout << "en la documento."<< endl;
     int draft_usado=0;
     fstream archDraft("DraftsGuardados.txt"); //Investigacion externa para el append de datos.
     if (archDraft.is_open()){
@@ -53,9 +55,11 @@ int main()
     bool ciclo = true;
     while (ciclo == true){
         //Para ver 
-        cout << "Quieres (0) agregar una carta, (1) ver tus cartas, (2) Salir, (3) Crear Caso Prueba (es una deck ya hecha)";
-        cout <<", (4) Terminar deck, (5) Mostrar deck anterior" << endl;
-        cout << "No uses espacios, usa _ si lo necesitas."<<endl;
+        cout << "Actualmente estas trabajando con la deck: "<< draft_usado<<endl;
+        cout << "Quieres (0) agregar una carta, (1) ver tus cartas, (2) Salir del programa, "<<endl;
+        cout << "(3) Crear Caso Prueba (es una deck ya hecha), (4) Terminar y guardar deck,"<<endl;
+        cout <<"(5) Mostrar deck anterior" << endl;
+        cout << "No uses espacios en tu respuesta, usa _ si lo necesitas."<<endl;
         int des;
         cin >> des;
         /*En esta primera opcion, se van a agregar cartas hasta el final. Complejidad en draft.h
@@ -68,16 +72,22 @@ int main()
             string color;
             int coste;
             int manapips;
-            cout << "Vas a agregar una carta, no uses espacios."<<endl;
-            cout << "Dame el nombre de la carta a agregar:" << endl;
+            cout << "Vas a agregar una carta"<<endl;
+            cout << "Recuerda que en un draft, solo se usan 40 cartas." <<endl;
+            cout << "Dame el nombre de la carta a agregar" << endl;
+            cout << "Se encuentra arriba de la carta: " << endl;
             cin >> nombre;
-            cout << "Dame el tipo de carta a agregar:" <<endl;
+            cout << "Dame el tipo de carta a agregar" <<endl;
+            cout << "(Creature, Instant, Sorcery, Planeswalker, etc.) " << endl;
             cin >> tipo;
             cout << "Dame el color de la carta" <<endl;
+            cout << "(Rojo, azul, negro, blanco o verde)" << endl; 
             cin >> color;
-            cout << "Dame el costo de la carta a agregar:" << endl;
+            cout << "Dame el costo de la carta a agregar" << endl;
+            cout << "Suelen ser de 0 a 13:" << endl;
             cin >> coste;
-            cout << "Dame el número de mana pips de la carta a agregar:" <<endl;
+            cout << "Dame el número de mana pips de la carta a agregar" <<endl;
+            cout << "Numero de simbolos de color, recuerda no agregar cartas de demasiados colores:" << endl;
             cin >> manapips;
             usuario.agregarCarta(draft_usado, nombre, tipo, color, coste, manapips);
 
@@ -91,16 +101,27 @@ int main()
         /*Es para salir de la aplicacion*/
         else if (des==2)
         {
-            break;
+            cout << "Seguro que quieres salir? Tu deck no se guarda"<<endl;
+            cout << "a menos que hayas usado el comando de guardar." << endl;
+            cout << "0 para cancelar, 1 para confirmar: " <<endl;
+            int desicionSalir;
+            cin >> desicionSalir;
+            if (desicionSalir==1){
+                break;
+            }
+
         }
         /*Genera los casos de prueba*/
         else if (des==3)
         {
+            cout << "Se va a generar un caso de Prueba, al principio no esta" << endl;
+            cout << "acomodado, para que se vea el cambio que hace el sort"<<endl;
             draft_usado+=1;
             usuario.casoPrueba(draft_usado);
         }
         /*Completa una deck con tierras.*/
         else if (des==4){
+
             usuario.terminarDeck(draft_usado);
             usuario.guardarDeck(draft_usado);
             cout << "Voy a crear un deck nuevo: "<<endl;
