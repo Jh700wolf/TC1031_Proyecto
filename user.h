@@ -68,6 +68,7 @@ void User::mostrarDraft(int n){
 
 
 void User::deckinicio(int n){
+    cout << "Se estan cargando las decks"<<endl;
     cout << "Deck cargada:" << n << endl;
     drafts[n]->sortDeckCost();
     drafts[n]->mostrarDeckadelante();
