@@ -56,8 +56,11 @@ int main()
     while (ciclo == true){
         //Para ver 
         cout << "Actualmente estas trabajando con la deck: "<< draft_usado<<endl;
-        cout << "Quieres (0) agregar una carta, (1) ver tus cartas, (2) Salir del programa, "<<endl;
-        cout << "(3) Crear Caso Prueba (es una deck ya hecha), (4) Terminar y guardar deck,"<<endl;
+        cout << "Quieres; (0) agregar una carta "<<endl;
+        cout << "(1) ver tus cartas"<<endl;
+        cout << "(2) Salir del programa"<<endl;
+        cout << "(3) Crear Caso Prueba (es una deck ya hecha)"<<endl;
+        cout << "(4) Terminar y guardar deck"<<endl;
         cout <<"(5) Mostrar deck anterior" << endl;
         cout << "No uses espacios en tu respuesta, usa _ si lo necesitas."<<endl;
         int des;
@@ -95,8 +98,18 @@ int main()
         /*Aqui te muestra la deck ya organizada, usando el sort explicado
         antes.*/
         else if (des==1)
-        {
-            usuario.mostrarDraft(draft_usado);
+        {   
+            int desa;
+            cout << "Quieres ver el orden de (0) costos o (1) manapips:"<<endl;
+            cin >> desa;
+            if (desa==0){
+                usuario.mostrarDraft(draft_usado);
+            }
+            if (desa==1){
+                usuario.mostrarDraftMP(draft_usado);
+            }
+
+            
         }
         /*Es para salir de la aplicacion*/
         else if (des==2)
@@ -128,7 +141,7 @@ int main()
             draft_usado+=1;
             usuario.ComenzarDraft(draft_usado);
         }
-
+        /*Ver decks anteriores */
         else if (des==5){
             int deckElegida;
             cout << "Elige la deck que quieres volver a visitar, no podras cambiarla pero si verla."<<endl;
