@@ -156,10 +156,8 @@ void Draft::mostrarDeckatras(){
     }
 }
 
-//Esta función utiliza bubble sort para acomodar las cartas de acuerdo al coste. Tiene una complejidad
-// de o(n**2) conforme al tiempo, pero una espacial de o(1). El peor de los casos es si las cartas
-// estan acomodadas de forma opuesta, lo que te lleva a recorrerla varias veces y cambiar de uno en uno
-//todos los valores.
+//Esta función utiliza merge sort para acomodar las cartas de acuerdo al coste. Tiene una complejidad
+// de o(nlogn) conforme al tiempo, pero una espacial de o(n).
 void Draft::sortDeckCost(){
     if (vacia()){
         return;
@@ -175,6 +173,8 @@ void Draft::sortDeckCost(){
     tail=p;
     }
 
+//Este es la funcion que se va a llamar para empezar la recursion del sort conforme a costos. Usa a Cortas y JuntarDecks, 
+//la pimera para generar la separación de las listas y la segunda para unirlas pero ya acomodadas.
 Carta* Draft::SortMerge(Carta *a){
     if (!a || !a->next){
         return a;
@@ -187,18 +187,22 @@ Carta* Draft::SortMerge(Carta *a){
 
 }
 
+//Este es la funcion que se va a llamar para empezar la recursion del sort conforme a manapips. Usa a Cortas y JuntarDecks, 
+//la pimera para generar la separación de las listas y la segunda para unirlas pero ya acomodadas.
 Carta* Draft::SortMergeManaP(Carta *a){
     if (!a || !a->next){
         return a;
     }
     Carta *mitad, *Head_;
     mitad = Cortar(a);
-    Head_=SortMerge(a);
-    mitad=SortMerge(mitad);
+    Head_=SortMergeManaP(a);
+    mitad=SortMergeManaP(mitad);
     return JuntarDeckManaP(Head_, mitad);
 
 }
 
+//La funcion del merge sort que se usa para separar la lista, cortandola a la mitad. Va a regresar un apuntador a la mitad de la lista,
+//y de esta forma ya se tiene head (que es como low) y mid.
 Carta* Draft::Cortar(Carta *a){
     Carta *p,*q, *aux;
     p=q=a;
@@ -211,6 +215,8 @@ Carta* Draft::Cortar(Carta *a){
     return aux;
 
 }
+
+//Aqui va a hacer la parte del merge de costes, juntando las listas de acuerdo a el orden de menor a mayor.
 Carta* Draft::JuntarDeck(Carta *a, Carta *b){
     if (!a){
         return b;
@@ -240,6 +246,7 @@ Carta* Draft::JuntarDeck(Carta *a, Carta *b){
     }
 }
 
+//Aqui va a hacer la parte del merge de manapips, juntando las listas de acuerdo a el orden de menor a mayor.
 Carta* Draft::JuntarDeckManaP(Carta *a, Carta *b){
     if (!a){
         return b;
@@ -249,7 +256,7 @@ Carta* Draft::JuntarDeckManaP(Carta *a, Carta *b){
     }
     if (a->manaPips<b->manaPips){
 
-        a->next=JuntarDeck(a->next, b);
+        a->next=JuntarDeckManaP(a->next, b);
         if(a->next){
             a->next->prev=a;
         }
@@ -258,7 +265,7 @@ Carta* Draft::JuntarDeckManaP(Carta *a, Carta *b){
         return a;
     }
     else{
-        b->next=JuntarDeck(a, b->next);
+        b->next=JuntarDeckManaP(a, b->next);
         if (b->next){
             b->next->prev=b;
         }
@@ -299,8 +306,11 @@ void Draft::sortDeckManaP(){
     {
         p=p->next;
     }
+    tail=p;
 
 }
+
+//Igual que los otros mostrar deck, esta es de complejidad o(n) ya que se recorre toda la lista.
 void Draft::mostrarDeckPips(){
     sortDeckManaP();
     Carta *p;
@@ -308,11 +318,12 @@ void Draft::mostrarDeckPips(){
     cout << "Toma en consideracion esto para ver si la carta es Splasheable o no." <<endl;
     p=head;
     while (p!=0){
-        cout << "Carta: "<< p->nombre <<" Tipo: "<<p->tipo<< " Color: "<< p->color<<" Coste: "<<p->coste<<endl;
+        cout << "Carta: "<< p->nombre <<" Tipo: "<<p->tipo<< " Color: "<< p->color<<" Manapips: "<<p->manaPips<<endl;
         p=p->next;
     }
 }
 
+//Su complejidad es de O(N), ya que debe de guardar todos los datos en el txt.
 void Draft::guardarCartas(){
     Carta *p;
     fstream archDraft("DraftsGuardados.txt",ios::app); //Investigacion externa para el append de datos.
