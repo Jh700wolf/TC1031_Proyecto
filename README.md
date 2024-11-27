@@ -14,9 +14,9 @@ El codigo actualmente presenta problemas en caso de que el usuario introduzca un
 
 *mostrarDeckdetras():* Es una funcion o(n), ya que se recorren todos los elementos de esta lista desde el tail al head.
 
-*sortDeckCost():* Tiene una complejidad de o(n**2) conforme al tiempo, pero una espacial de o(1). La complejidad espacial es importante, ya que hay muchos drafts cada uno con su propia cadena, y generar aun mas genera problemas. El peor de los casos es si las cartas estan acomodadas de forma opuesta, lo que te lleva a recorrerla varias veces y cambiar de uno en uno todos los valores.
+*sortDeckCost():* Tiene una complejidad de o(nlogn) conforme al tiempo, pero una espacial de o(n). Se hizo el cambio para asegurar un algoritmo mas eficiente, y redujo considerablemente la complejidad de tiempo.
 
-*sortDeckManaP():* Tiene una complejidad de o(n**2) conforme al tiempo, pero una espacial de o(1). El peor de los casos es si las cartas estan acomodadas de forma opuesta, lo que te lleva a recorrerla varias veces y cambiar de uno en uno todos los valores.
+*sortDeckManaP():* Tiene una complejidad de o(nlogn) conforme al tiempo, pero una espacial de o(n). Se hizo el cambio para asegurar un algoritmo mas eficiente, y redujo considerablemente la complejidad de tiempo. 
 
 *mostrarDeckPips():* Es una funcion O(n), ya que se recorren todos los elementos de esta lista desde el head al tail. 
 
