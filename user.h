@@ -24,6 +24,7 @@ class User
         void setNombre(string);
         void ComenzarDraft(int);
         void mostrarDraft(int);
+        void mostrarDraftMP(int);
         void agregarCarta(int,string,string,string,int,int);
         void casoPrueba(int);
         void terminarDeck(int);
@@ -63,9 +64,13 @@ void User::mostrarDraft(int n){
     drafts[n]->sortDeckCost();
     drafts[n]->mostrarDeckadelante();
     drafts[n]->mostrarDeckatras();
-    drafts[n]->mostrarDeckPips();
 }
 
+void User::mostrarDraftMP(int n){
+    cout << "Asi se ven en orden tus cartas:" << endl;
+    drafts[n]->sortDeckManaP();
+    drafts[n]->mostrarDeckPips();
+}
 
 void User::deckinicio(int n){
     cout << "Se estan cargando las decks"<<endl;
@@ -102,6 +107,7 @@ void User::terminarDeck(int n){
 }
 
 void User::guardarDeck(int n){
+    drafts[n]->sortDeckCost();
     fstream archDraft("DraftsGuardados.txt",ios::app);
         if (archDraft.is_open()){
             archDraft << n <<endl;
